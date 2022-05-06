@@ -1,7 +1,7 @@
 import React from 'react';
 import './Navbar.css'
 import { Toprated } from './Top_rated/Top_rated';
-import {HashRouter,Route,Routes, Link} from 'react-router-dom';
+import {HashRouter,Route,Routes} from 'react-router-dom';
 import {Popular} from './Home/Popular/Popular';
 import {Upcoming} from './Upcoming/upcoming'; 
 
