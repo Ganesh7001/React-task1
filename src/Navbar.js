@@ -1,12 +1,47 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import './Navbar.css'
 import { Toprated } from './Top_rated/Top_rated';
 import {HashRouter,Route,Routes} from 'react-router-dom';
 import {Popular} from './Home/Popular/Popular';
 import {Upcoming} from './Upcoming/upcoming'; 
+import {Container,Nav,Form,FormControl,Button} from 'react-bootstrap';
 
-
+const API_URL="https://api.themoviedb.org/3/movie/popular?api_key=c45a857c193f6302f2b5061c3b85e743"
 function Navbar(){
+  const [movies, setMovies]=useState([]);
+  const[query,setQuery]=useState("");
+
+  useEffect(()=>{
+    fetch(API_URL)
+    .then((res)=>res.json())
+    .then(data=>{
+      console.log(data);
+      setMovies(data.results);
+    })
+  
+  },[]) 
+
+
+  const searchMovie=async(e)=>{
+    e.preventDefault();
+    console.log("Searching")
+    try{
+      const url=`https://api.themoviedb.org/3/search/movie?api_key=c45a857c193f6302f2b5061c3b85e743&language=en-US&query=${query}&page=1`
+      const res=await fetch(url);
+      const data=await res.json();
+      console.log(data);
+      setMovies(data.results)
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+
+  const changeHandeler=(e)=>{
+    setQuery(e.target.value);
+
+  }
+
 return (
   <div>
 <nav className="navbar navbar-expand-lg  navbar-dark bg-dark" id='sticky'>
@@ -27,9 +62,10 @@ return (
           <a className="nav-link" href="#/Upcoming">Upcoming</a>
         </li>
       </ul>
-      <form className="d-flex">
-        <input className="form-control me-2" type="search" placeholder="Movie Name" aria-label="Search"/>
-        <button className="btn btn-outline-success" type="submit">Search</button>
+      <form className="d-flex" onSubmit={searchMovie}>
+        <FormControl type="search" placeholder="Movie Search" className="me-2" aria-label="Search" name="query" value={query} onChange={changeHandeler}>
+        </FormControl>
+        <Button varient="secondary" type="submit">Search</Button>
       </form>
     </div>
   </div>

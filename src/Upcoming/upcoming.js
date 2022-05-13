@@ -1,88 +1,80 @@
-import React from 'react';
+import React, {useState,useEffect} from 'react';
 import './upcoming.css';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container,Row, Col, ModalBody} from 'react-bootstrap';
+import {Modal, ModalHeader} from "reactstrap";
 
 
-const Reused=(Props)=>{
-    return(
-        <Col className='card-row'>
-                        <div className='wrapper'>
-                            <div className='card'>
-                                <img src={Props.src} alt="cb" className='img' />
-                                <div className='info'>
-                                    <h1>{Props.Name}</h1>
-                                    <p>{Props.Desc}</p>
-                                    <a href='#' className='btn'>Shop Now </a>
+const API_IMG="https://image.tmdb.org/t/p/w500"
+const Reuse=({title,poster_path,overview,vote_average,release_date})=>{
+  const [modal,setmodal]=useState(false)
 
-                                </div>
-                            </div>
-                        </div>
-                    </Col>
-    )
+return (<Col className='card-row'>
+          <div className='wrapper'>
+           <div className='card'>
+              <img  src={API_IMG+poster_path} alt="cb" className='img' />
+               <div className='info'>
+               <h1 style={{textAlign:'center'}}>{title}</h1>
+                <Modal
+                size='lg'
+                isOpen={modal}
+                toggle={()=>setmodal(!modal)}>
+                  <ModalHeader
+                     toggle={()=>setmodal(!modal)}>
+                  Movie Details
+                  </ModalHeader>
+                  <ModalBody> 
+                  <div>
+                 <img className='card-img-top' style={{width:"25rem"}}src={API_IMG+poster_path}/>
+                 <h1>{title}</h1> 
+                <h4>IMDb:{vote_average}</h4>
+                <h5>Release Date:{release_date}</h5>
+                <br/>
+                <h2>Overview</h2>
+                <h4 style={{color:'grey'}}>{overview}</h4>
+               </div>
+                  
+                  </ModalBody>
+                </Modal>
+                <button type="button" className='btn btn-dark' onClick={()=>setmodal(true)}>Click here </button> 
+
+                </div>
+               </div>
+             </div>
+           </Col>)
+
 
 }
 
-export const Upcoming = () => {
+const API_URL="https://api.themoviedb.org/3/movie/upcoming?api_key=c45a857c193f6302f2b5061c3b85e743"
 
-    const data=[
-        {   
-         src:"https://image.tmdb.org/t/p/w500/2n95p9isIi1LYTscTcGytlI4zYd.jpg",
-         Name:"The Outfit",
-         Desc:"Leonard is an English tailor who used to craft suits on London’s world-famous Savile Row. After a personal tragedy, he’s ended up in Chicago, operating a small tailor shop in a rough part of town where he makes beautiful clothes "
-        },
-        {
-         src:"https://image.tmdb.org/t/p/w500/zGPLpljwrlK2y7AWXVpGx0ceIyH.jpg",
-         Name:"The Bad Guys",
-         Desc:"When the infamous Bad Guys are finally caught after years of countless heists and being the world’s most-wanted villains, Mr. Wolf brokers a deal to save them all from prison."
-        },
-        {
-         src:"https://image.tmdb.org/t/p/w500/cqnVuxXe6vA7wfNWubak3x36DKJ.jpg",
-         Name:"The Northman",
-         Desc:"Prince Amleth is on the verge of becoming a man when his father is brutally murdered by his uncle, who kidnaps the boy's mother."
-        },
-        {
-         src:"https://image.tmdb.org/t/p/w500/geYUecpFI2AonDLhjyK9zoVFcMv.jpg",
-         Name:"Yuta Okkotsu",
-         Desc:"Yuta Okkotsu is a nervous high school student who is suffering from a serious problem—his childhood friend Rika has turned into a curse and won't leave him alone."
-        },
-        {
-         src:"https://image.tmdb.org/t/p/w500/9SISFlf6SEiIb7CMk8h0Gu3NYow.jpg",
-         Name:"The Green Mile",
-         Desc:"A supernatural tale set on death row in a Southern prison, where gentle giant John Coffey possesses the mysterious power to heal people's ailments."
-        },
-        {
-         src:"https://image.tmdb.org/t/p/w500/z4lNqsc7uhSbtbniOS6r0fTIvv5.jpg",
-         Name:"The Medium",
-         Desc:"A horrifying story of a shaman’s inheritance in the Isan region of Thailand. But the goddess that appears to have taken possession of a family member turns out not be as benevolent as it first appears"
-        },
-        {
-         src:"https://image.tmdb.org/t/p/w500/kiH3KPWi7BaRMvdAigcwrUFViHl.jpg",
-         Name:"The Novice",
-         Desc:"A college freshman joins her university's rowing team and undertakes an obsessive physical and psychological journey to make it to the top varsity boat"
-        },
-        {
-        src:"https://image.tmdb.org/t/p/w500/kk28Lk8oQBGjoHRGUCN2vxKb4O2.jpg",
-         Name:"The Novice",
-         Desc: "A college freshman joins her university's rowing team and undertakes an obsessive physical and psychological journey to make it to the top varsity boat"
-        }
-     ]
-     
+export const Upcoming = () => {
+    const [movies, setMovies]=useState([]);
+
+    useEffect(()=>{
+      fetch(API_URL)
+      .then((res)=>res.json())
+      .then(data=>{
+        console.log(data);
+        setMovies(data.results);
+      })
+    
+    },[]) 
+
 
 
     return (
         <div>
-
-            <div>
-            <div className='h1 mh text-dark text-muted' id="Products">Up-Coming</div>
+         <div>
+            <div className='h1 mh  text-dark text-muted'id="Products">Upcoming movies</div>
             </div>
+            
             <Container className='card-container'>
                 <Row className='card-row1'>
 
                 {
-                    data.map((Object,i)=>{
-                        return <Reused src={Object.src} Name={Object.Name} Desc={Object.Desc}/>
-                    })
-                }
+                    
+                    movies.map((movieReq)=><Reuse key={movieReq.id} {...movieReq}/>)
+                }  
                     
                 </Row>
             </Container>

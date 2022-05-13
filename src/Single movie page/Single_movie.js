@@ -7,9 +7,7 @@ export const Single = () => {
         <header class="masthead" id="masthead">
             <div class="container">
                 <div class="masthead-subheading"></div>
-                <div class="masthead-heading text-uppercase"></div>
-                
-                
+                <div class="masthead-heading text-uppercase"></div>               
             </div>
         </header>
     </div>
